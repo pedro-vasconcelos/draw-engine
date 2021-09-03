@@ -1,37 +1,52 @@
 {
-    "name": "pedro-vasconcelos/draw-engine",
-    "description": "Draw engine for promotion projects.",
-    "keywords": [
-        "pedro-vasconcelos",
-        "request",
-        "draw-engine"
-    ],
-    "homepage": "https://github.com/pedro-vasconcelos/draw-engine",
-    "license": "MIT",
-    "authors": [
-        {
-            "name": "Pedro Vasconcelos",
-            "email": "me@pedrovasconcelos.com",
-            "homepage": "https://pedrovasconcelos.com",
-            "role": "Developer"
-        }
-    ],
-    "require": {
-        "php": "^7.4|^8.0",
-        "illuminate/support": "^8.58"
-    },
-    "autoload": {
-        "psr-4": {
-            "PedroVasconcelos\\DrawEngine\\": "src/"
-        }
-    },
-    "extra": {
-        "laravel": {
-            "providers": [
-                "PedroVasconcelos\\DrawEngine\\DrawServiceProvider"
-            ]
-        }
-    },
-    "minimum-stability": "dev",
-    "prefer-stable": true
+  "name": "pedro-vasconcelos/draw-engine",
+  "description": "Draw engine Laravel package for promotion projects.",
+  "keywords": [
+    "pedro-vasconcelos",
+    "request",
+    "draw-engine"
+  ],
+  "homepage": "https://github.com/pedro-vasconcelos/draw-engine",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Pedro Vasconcelos",
+      "email": "me@pedrovasconcelos.com",
+      "homepage": "https://pedrovasconcelos.com",
+      "role": "Developer"
+    }
+  ],
+  "require": {
+    "php": "^7.4|^8.0",
+    "illuminate/support": "^8.58"
+  },
+  "require-dev": {
+    "roave/security-advisories": "dev-latest",
+    "phpunit/phpunit": "^9.5",
+    "orchestra/testbench": "^6.20"
+  },
+  "autoload": {
+    "psr-4": {
+      "PedroVasconcelos\\DrawEngine\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "PedroVasconcelos\\DrawEngine\\Tests\\": "tests"
+    }
+  },
+  "extra": {
+    "laravel": {
+      "providers": [
+        "PedroVasconcelos\\DrawEngine\\DrawServiceProvider"
+      ]
+    }
+  },
+  "scripts": {
+    "post-autoload-dump": [
+      "@php ./vendor/bin/testbench package:discover --ansi"
+    ]
+  },
+  "minimum-stability": "dev",
+  "prefer-stable": true
 }
