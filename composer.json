@@ -14,5 +14,7 @@
             "email": "me@pedrovasconcelos.com"
         }
     ],
-    "require": {}
+    "require": {
+        "php": ">=7.4"
+    }
 }
