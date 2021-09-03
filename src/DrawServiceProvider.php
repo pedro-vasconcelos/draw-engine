@@ -1,6 +1,7 @@
 <?php
-
 namespace PedroVasconcelos\DrawEngine;
+
+use Illuminate\Support\ServiceProvider;
 
 class DrawServiceProvider extends ServiceProvider
 {
