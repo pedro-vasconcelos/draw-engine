@@ -1,20 +1,35 @@
 {
     "name": "pedro-vasconcelos/draw-engine",
     "description": "Draw engine for promotion projects.",
-    "type": "library",
+    "keywords": [
+        "pedro vasconcelos",
+        "draw-engine"
+    ],
+    "homepage": "https://github.com/pedro-vasconcelos/draw-engine",
     "license": "MIT",
+    "authors": [
+        {
+            "name": "Pedro Vasconcelos",
+            "email": "me@pedrovasconcelos.com",
+            "homepage": "https://pedrovasconcelos.com",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "php": "^7.4|^8.0"
+    },
     "autoload": {
         "psr-4": {
             "PedroVasconcelos\\DrawEngine\\": "src/"
         }
     },
-    "authors": [
-        {
-            "name": "Pedro Vasconcelos",
-            "email": "me@pedrovasconcelos.com"
+    "extra": {
+        "laravel": {
+            "providers": [
+                "PedroVasconcelos\\DrawEngine\\DrawServiceProvider"
+            ]
         }
-    ],
-    "require": {
-        "php": ">=7.4"
-    }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
 }
