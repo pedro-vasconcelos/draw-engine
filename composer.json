@@ -1,0 +1,18 @@
+{
+    "name": "pedro-vasconcelos/draw-engine",
+    "description": "Draw engine for promotion projects.",
+    "type": "library",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "PedroVasconcelos\\DrawEngine\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Pedro Vasconcelos",
+            "email": "me@pedrovasconcelos.com"
+        }
+    ],
+    "require": {}
+}
