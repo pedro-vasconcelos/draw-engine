@@ -3,6 +3,8 @@
 namespace PedroVasconcelos\DrawEngine\Console;
 
 use Illuminate\Console\Command;
+use PedroVasconcelos\DrawEngine\Models\PrizeDeliverySchedule;
+use PedroVasconcelos\DrawEngine\Models\WinnerGame;
 
 class GenerateWinnerGamesCommand extends Command
 {

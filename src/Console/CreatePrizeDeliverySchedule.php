@@ -52,7 +52,7 @@ class CreatePrizeDeliverySchedule extends Command
         foreach ($schedule as $date => $prizes) {
             if ( $prizes > 0 ) {
                 ray($date,$prizes);
-                \App\Models\PrizeDeliverySchedule::create([
+                \PedroVasconcelos\DrawEngine\Models\PrizeDeliverySchedule::create([
                     'date' => $date,
                     'draw_id' => 1,
                     'quantity' => $prizes,
