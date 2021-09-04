@@ -1,11 +1,10 @@
 <?php
 
-namespace PedroVasconcelos\DrawEngine\Tests\Feature;
+namespace PedroVasconcelos\DrawEngine\Tests;
 
 use PedroVasconcelos\DrawEngine\Exceptions\InvalidDatePeriod;
 use PedroVasconcelos\DrawEngine\Exceptions\InvalidPrizeQuantity;
 use PedroVasconcelos\DrawEngine\PrizeDeliverySchedule;
-use PedroVasconcelos\DrawEngine\Tests\TestCase;
 use Carbon\Carbon;
 
 class DeliveryScheduleTest extends TestCase

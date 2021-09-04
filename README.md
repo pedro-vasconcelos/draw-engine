@@ -8,6 +8,12 @@
 
 Introduction
 
+## Install
+
+```bash
+php artisan vendor:publish --provider="PedroVasconcelos\DrawEngine\DrawServiceProvider" --tag="migrations"
+```
+
 ## Changelog
 
 Please see [CHANGELOG](CHANGELOG.md) for more information on what has changed recently.
@@ -19,4 +25,4 @@ Please see [CHANGELOG](CHANGELOG.md) for more information on what has changed re
 
 ## License
 
-The MIT License (MIT). Please see [License File](LICENSE.md) for more information.
+The MIT License (MIT). Please see [License File](LICENSE) for more information.
