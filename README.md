@@ -14,6 +14,13 @@ Introduction
 php artisan vendor:publish --provider="PedroVasconcelos\DrawEngine\DrawServiceProvider" --tag="migrations"
 ```
 
+## Commands
+
+```bash
+app:create-prize-delivery-schedule
+app:generate-winner-game
+```
+
 ## Changelog
 
 Please see [CHANGELOG](CHANGELOG.md) for more information on what has changed recently.
