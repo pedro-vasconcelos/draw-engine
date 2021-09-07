@@ -3,6 +3,7 @@
 namespace PedroVasconcelos\DrawEngine\Console;
 
 use Illuminate\Console\Command;
+use Illuminate\Support\Carbon;
 use PedroVasconcelos\DrawEngine\Models\PrizeDeliverySchedule;
 use PedroVasconcelos\DrawEngine\Models\WinnerGame;
 
@@ -13,14 +14,14 @@ class GenerateWinnerGamesCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'app:generate-winner-games';
+    protected $signature = 'app:generate-winner-games {draw_id} {date? : date (YYYY-MM-DD) to generate the winner games}';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Generate winner games';
+    protected $description = 'Generate winner games for draw ID';
 
     /**
      * Create a new command instance.
@@ -39,7 +40,12 @@ class GenerateWinnerGamesCommand extends Command
      */
     public function handle()
     {
-        $quotas = PrizeDeliverySchedule::whereDate('date', '=', now()->toDateString())->get();
+        if ($this->argument('date'))
+            $date = Carbon::createFromFormat('Y-m-d', $this->argument('date'));
+        else
+            $date = Carbon::now();
+        
+        $quotas = PrizeDeliverySchedule::whereDate('date', '=', $date->toDateString())->get();
         foreach ($quotas as $quota) {
             $range = range(1, 10);
             shuffle($range);
@@ -57,7 +63,8 @@ class GenerateWinnerGamesCommand extends Command
         foreach( $winnerGames as $winnerGame ) {
             WinnerGame::create([
                 'date' => $date,
-                'draw_id' => 1,
+                'draw_id' => $this->argument('draw_id'),
+                'draw_type' => config('draw-engine.models.draw'),
                 'winner_game' => $winnerGame,
             ]);
         }

@@ -2,7 +2,6 @@
   "name": "pedro-vasconcelos/draw-engine",
   "description": "Draw engine Laravel package for promotion projects.",
   "keywords": [
-    "pedro-vasconcelos",
     "request",
     "draw-engine"
   ],
@@ -24,7 +23,8 @@
     "roave/security-advisories": "dev-latest",
     "phpunit/phpunit": "^9.5",
     "orchestra/testbench": "^6.20",
-    "nunomaduro/collision": "^5.9"
+    "nunomaduro/collision": "^5.9",
+    "spatie/laravel-ray": "^1.25"
   },
   "autoload": {
     "psr-4": {
@@ -33,7 +33,8 @@
   },
   "autoload-dev": {
     "psr-4": {
-      "PedroVasconcelos\\DrawEngine\\Tests\\": "tests"
+      "PedroVasconcelos\\DrawEngine\\Tests\\": "tests",
+      "PedroVasconcelos\\DrawEngine\\Database\\Factories\\": "database/factories"
     }
   },
   "extra": {

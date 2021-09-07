@@ -11,5 +11,10 @@ class PrizeDeliverySchedule extends Model
 
     protected $table = 'prize_delivery_schedule';
     protected $guarded = [];
-
+    
+    public function draw()
+    {
+        return $this->morphTo();
+    }
+    
 }

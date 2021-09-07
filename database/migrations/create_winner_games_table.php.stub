@@ -17,8 +17,8 @@ class CreateWinnerGamesTable extends Migration
             $table->id();
             $table->date('date')->nullable();
 
-            $table->foreign('draw_id')->references('id')->on('draws');
-            $table->unsignedBigInteger('draw_id')->unsigned()->nullable();
+            $table->unsignedBigInteger('draw_id');
+            $table->string('draw_type');
 
             $table->unsignedBigInteger('winner_game')->unsigned()->nullable();
 

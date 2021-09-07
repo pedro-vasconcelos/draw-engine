@@ -13,14 +13,14 @@ class CreatePrizeDeliverySchedule extends Command
      *
      * @var string
      */
-    protected $signature = 'app:create-prize-delivery-schedule';
+    protected $signature = 'app:create-prize-delivery-schedule {draw_id}';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Creates the prize delivery schedule.';
+    protected $description = 'Creates the prize delivery schedule for draw ID.';
 
     /**
      * Create a new command instance.
@@ -54,7 +54,8 @@ class CreatePrizeDeliverySchedule extends Command
                 ray($date,$prizes);
                 \PedroVasconcelos\DrawEngine\Models\PrizeDeliverySchedule::create([
                     'date' => $date,
-                    'draw_id' => 1,
+                    'draw_id' => $this->argument('draw_id'),
+                    'draw_type' => config('draw-engine.models.draw'),
                     'quantity' => $prizes,
                 ]);
             }

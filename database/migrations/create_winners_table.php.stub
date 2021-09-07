@@ -25,8 +25,8 @@ class CreateWinnersTable extends Migration
             $table->dateTime('notified_at')->nullable();
             $table->dateTime('read_at')->nullable();
 
-            $table->unsignedBigInteger('game_id')->nullable();
-            $table->foreign('game_id')->references('id')->on('games');
+            $table->unsignedBigInteger('game_id');
+            $table->string('game_type');
 
             $table->timestamps();
         });

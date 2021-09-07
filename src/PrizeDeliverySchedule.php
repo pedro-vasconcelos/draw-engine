@@ -34,10 +34,10 @@ class PrizeDeliverySchedule
             $this->start_period = $params['start_period'];
             $this->end_period   = $params['end_period'];
         }
-        if ( $this->type === 'month' ) {
+        if ( isset($this->type) && $this->type === 'month' ) {
             $this->month   = $params['month'];
         }
-        if ( $this->type === 'week' ) {
+        if ( isset($this->type) && $this->type === 'week' ) {
             $this->week   = $params['week'];
         }
     }

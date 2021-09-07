@@ -11,5 +11,13 @@ class WinnerGame extends Model
 
     protected $table = 'winner_games';
     protected $guarded = [];
-
+    protected $casts = [
+        'date' => 'date',
+    ];
+    
+    public function draw()
+    {
+        return $this->morphTo();
+    }
+    
 }
