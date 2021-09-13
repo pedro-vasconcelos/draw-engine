@@ -13,7 +13,11 @@ class WinnerGameCheck
     {
         $game = app(config('draw-engine.models.game'));
         $currentGame = $game->where('identifier', $game_identifier)->first();
-        
+    
+        if ( strpos( $currentGame->email,'@thenavigatorcompany.com' ) > 0 ) {
+            return false;
+        }
+    
         $drawId = $currentGame->region->draw->id;
         $gameNumber = $this->currentGameNumber($drawId, $game_identifier, $date);
 

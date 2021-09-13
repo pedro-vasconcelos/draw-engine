@@ -232,4 +232,35 @@ class WinnerTest extends TestCase
         $this->assertDatabaseCount(Game::class, 3);
     }
     
+    
+    /** @test */
+    public function it_cant_win_if_email_is_from_blocked_domain(): void
+    {
+        // == ARRANGE ==
+        // Momento vencedor
+        WinnerGame::create([
+            'date' => now(),
+            'draw_id' => 1,
+            'draw_type' => config('draw-engine.models.draw'),
+            'winner_game' => 1,
+            'burned' => 0,
+        ]);
+        
+        // == ACT ==
+        $game = Game::create([
+            'identifier' => '123',
+            'email' => 'steve.jobs@thenavigatorcompany.com',
+            'fingerprint' => '987654321',
+            'week' => 29,
+            'region_id' => 1,
+            'created_at' => now(),
+        ]);
+        
+        // == ASSERT ==
+        // faz a validação do jogo
+        $check = new WinnerGameCheck();
+        // O jogo não é vencedor
+        $result_game = $check->isWinnerGame($game->identifier, now() );
+        $this->assertFalse($result_game);
+    }
 }
