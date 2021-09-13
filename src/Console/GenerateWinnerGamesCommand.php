@@ -44,10 +44,13 @@ class GenerateWinnerGamesCommand extends Command
             $date = Carbon::createFromFormat('Y-m-d', $this->argument('date'));
         else
             $date = Carbon::now();
-        
+    
+        $drawModel = app(config('draw-engine.models.draw'));
+        $draw = $drawModel->find($this->argument('draw_id'));
+    
         $quotas = PrizeDeliverySchedule::whereDate('date', '=', $date->toDateString())->get();
         foreach ($quotas as $quota) {
-            $range = range(1, 10);
+            $range = range($draw->winner_game_range_start, $draw->winner_game_range_end);
             shuffle($range);
             $winnerGames = array_slice($range,0,$quota->quantity);
             $this->generateWinneGames(

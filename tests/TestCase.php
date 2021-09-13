@@ -55,12 +55,16 @@ class TestCase extends \Orchestra\Testbench\TestCase
             $table->string('description')->default('');
             $table->integer('daily_prize_cap');
             $table->integer('prizes');
+            $table->integer('prize_delivery_interval')->default(0);
             $table->string( 'algorithm');
             $table->string('type');
             $table->integer('week')->nullable();
             $table->integer('month')->nullable();
             $table->dateTime( 'start_period')->nullable();
             $table->dateTime('end_period')->nullable();
+            $table->integer('winner_game_range_start')->default(1);
+            $table->integer('winner_game_range_end')->default(10);
+            $table->string('frequency')->default('day');
             $table->timestamps();
         });
     
@@ -108,6 +112,11 @@ class TestCase extends \Orchestra\Testbench\TestCase
             'algorithm' => 'spaced',
             'type' => 'week',
             'week' => 34,
+
+            'prize_delivery_interval' => 1,
+            'winner_game_range_start' => 1,
+            'winner_game_range_end' => 10,
+            'frequency' => 'week',
         ]);
         
         Draw::create([
@@ -117,6 +126,12 @@ class TestCase extends \Orchestra\Testbench\TestCase
             'algorithm' => 'spaced',
             'type' => 'month',
             'month' => 9,
+
+            'prize_delivery_interval' => 1,
+            'winner_game_range_start' => 1,
+            'winner_game_range_end' => 10,
+            'frequency' => 'week',
+
         ]);
     
         Region::create([

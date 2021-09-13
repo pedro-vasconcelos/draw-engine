@@ -2,8 +2,8 @@
 
 namespace PedroVasconcelos\DrawEngine\Tests;
 
+use Faker\Factory;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use PedroVasconcelos\DrawEngine\Models\PrizeDeliverySchedule;
 use PedroVasconcelos\DrawEngine\Models\Winner;
 use PedroVasconcelos\DrawEngine\Models\WinnerGame;
 use PedroVasconcelos\DrawEngine\WinnerGameCheck;
@@ -12,36 +12,54 @@ class WinnerTest extends TestCase
 {
     use RefreshDatabase;
     
-    /** @test */
-    public function it_can_match_a_winner_game(): void
-    {
-        // Tenho jogos no sistema
-        $game1 = Game::create([
-            'identifier' => '123',
-            'region_id' => 1,
-            'week' => 32,
-        ]);
-        $game2 = Game::create([
-            'identifier' => '1234',
-            'region_id' => 1,
-            'week' => 32,
-        ]);
+    protected $faker;
     
-        // Momento vencedor
+    public function setUp(): void
+    {
+        parent::setUp();
+        $this->faker = Factory::create();
+    }
+    
+    /** @test */
+    public function it_can_detect_if_a_game_matches_a_winner_moment_or_not(): void
+    {
+        // == ARRANGE ==
+        // Draw, initialized on TestCase.php
+        $draw = Draw::first();
+        // Winner Game Sequence
         WinnerGame::create([
             'date' => now(),
-            'draw_id' => 1,
+            'draw_id' => $draw->id,
             'draw_type' => config('draw-engine.models.draw'),
             'winner_game' => 2,
             'burned' => 0,
         ]);
+    
+        // == ACT ==
+        // First player plays
+        $game1 = Game::create([
+            'identifier' => $this->faker->sha1(),
+            'email' => 'steve.jobs@apple.com',
+            'fingerprint' => $this->faker->sha1(),
+            'region_id' => 1,
+            'week' => 32,
+        ]);
+        // Second player plays
+        $game2 = Game::create([
+            'identifier' => $this->faker->sha1(),
+            'email' => 'jony.ive@apple.com',
+            'fingerprint' => $this->faker->sha1(),
+            'region_id' => 1,
+            'week' => 32,
+        ]);
         
+        
+        // == ASSERT ==
         // faz a validação do jogo
         $check = new WinnerGameCheck();
         // O jogo não é vencedor
         $result_game_1 = $check->isWinnerGame($game1->identifier, now() );
         $this->assertFalse($result_game_1);
-        
         // O jogo é vencedor
         $result_game_2 = $check->isWinnerGame($game2->identifier, now() );
         $this->assertTrue($result_game_2);
@@ -52,17 +70,17 @@ class WinnerTest extends TestCase
     {
         // Tenho jogos no sistema
         $game1 = Game::create([
-            'identifier' => '123',
+            'identifier' => $this->faker->sha1(),
             'region_id' => 1,
             'week' => 32,
         ]);
         $game2 = Game::create([
-            'identifier' => '1234',
+            'identifier' => $this->faker->sha1(),
             'region_id' => 2,
             'week' => 32,
         ]);
         $game3 = Game::create([
-            'identifier' => '12345678',
+            'identifier' => $this->faker->sha1(),
             'region_id' => 2,
             'week' => 32,
         ]);
@@ -92,11 +110,11 @@ class WinnerTest extends TestCase
     }
     
     /** @test */
-    public function it_can_detect_if_moment_is_burned(): void
+    public function it_can_detect_if_a_winner_moment_is_burned(): void
     {
         // Tenho jogos no sistema
         $game1 = Game::create([
-            'identifier' => '123',
+            'identifier' => $this->faker->sha1(),
             'region_id' => 1,
             'week' => 32,
         ]);
@@ -118,19 +136,24 @@ class WinnerTest extends TestCase
     }
     
     /** @test */
-    public function it_can_detect_if_user_already_won(): void
+    public function it_can_burn_th_winning_moment_if_the_user_already_won(): void
     {
         // Tenho jogos no sistema
+        
+        // User
+        $email = 'steve.jobs@apple.com';
+        $fingerprint = $this->faker->sha1();
+        
+        // This user played 7 days ago and won
         Game::create([
-            'identifier' => '123',
-            'email' => 'steve.jobs@apple.com',
-            'fingerprint' => '987654321',
+            'identifier' => $this->faker->sha1(),
+            'email' => $email,
+            'fingerprint' => $fingerprint,
             'week' => 29,
             'region_id' => 1,
             'created_at' => now()->subDays(7),
         ]);
-    
-        $winner = Winner::create([
+            Winner::create([
             'full_name' => 'Steve Jobs',
             'email' => 'steve.jobs@apple.com',
             'phone' => '987 123 233',
@@ -140,7 +163,7 @@ class WinnerTest extends TestCase
             'game_type' => config('draw-engine.models.game'),
         ]);
     
-        // Momento vencedor
+        // We have a winning moment
         WinnerGame::create([
             'date' => now(),
             'draw_id' => 1,
@@ -149,10 +172,12 @@ class WinnerTest extends TestCase
             'burned' => 0,
         ]);
     
+        // If the same user matched the winning moment
+        // The system will burn the wining momento and generate another
         $game = Game::create([
-            'identifier' => '98765',
-            'email' => 'steve.jobs@apple.com',
-            'fingerprint' => '987654321',
+            'identifier' => $this->faker->sha1(),
+            'email' => $email,
+            'fingerprint' => $fingerprint,
             'region_id' => 1,
             'week' => 32,
         ]);
@@ -171,28 +196,32 @@ class WinnerTest extends TestCase
     {
         // Tenho jogos no sistema que pertencem a Draws diferentes
         $game1 = Game::create([
-            'identifier' => '123',
+            'identifier' => $this->faker->sha1(),
             'email' => 'steve.jobs@apple.com',
-            'fingerprint' => '987654321',
-            'week' => 29,
+            'fingerprint' => $this->faker->sha1(),
+            'week' => now()->format('W'),
             'region_id' => 1,
             'created_at' => now(),
         ]);
     
+        // User
+        $email = 'steve.balmer@apple.com';
+        $fingerprint = $this->faker->sha1();
+    
         Game::create([
-            'identifier' => '456aa',
-            'email' => 'steve.balmer@applea.com',
-            'fingerprint' => 'abcdefaa',
-            'week' => 29,
+            'identifier' => $this->faker->sha1(),
+            'email' => $email,
+            'fingerprint' => $fingerprint,
+            'week' => now()->format('W'),
             'region_id' => 2,
             'created_at' => now(),
         ]);
         
         $game2 = Game::create([
-            'identifier' => '456',
-            'email' => 'steve.balmer@apple.com',
-            'fingerprint' => 'abcdef',
-            'week' => 29,
+            'identifier' => $this->faker->sha1(),
+            'email' => $email,
+            'fingerprint' => $fingerprint,
+            'week' => now()->format('W'),
             'region_id' => 2,
             'created_at' => now(),
         ]);

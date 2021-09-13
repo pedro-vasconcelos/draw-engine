@@ -2,6 +2,7 @@
 
 namespace PedroVasconcelos\DrawEngine;
 
+use Illuminate\Support\Carbon;
 use PedroVasconcelos\DrawEngine\Models\Winner;
 use PedroVasconcelos\DrawEngine\Models\WinnerGame;
 
@@ -42,6 +43,7 @@ class WinnerGameCheck
                 $query->where('fingerprint', $fingerprint)
                       ->orWhere('email', $email);
             })->count() > 0;
+            
             if ($alreadyWon) {
                 $this->burnGame($drawId, $game_identifier);
                 return false;
@@ -55,13 +57,21 @@ class WinnerGameCheck
     {
         // Resolve o model de Game que estiver configurado
         $game     = app(config('draw-engine.models.game'));
-        
+        $drawModel = app(config('draw-engine.models.draw'));
+        $draw = $drawModel->find($draw_id);
+    
+    
         // Vai buscar todos os jogos do dia, ordenados por id
         // Devolve o contador/indice/key do jogo em causa
-        $game_day_sequence = $game->select('identifier')
+        $queryBuilder = $game->select('identifier');
+        if ( $draw->frequency === 'day' ) {
             // Só contam os jogos do dia
-                         ->whereDate('created_at', $date->toDateString())
-                         ->whereHas('region', function ($query) use ($draw_id) {
+            $queryBuilder->whereDate('created_at', $date);
+        } elseif ( $draw->frequency === 'week' ) {
+            $queryBuilder->where('week', $date->format('W') );
+        }
+        
+        $game_day_sequence = $queryBuilder->whereHas('region', function ($query) use ($draw_id) {
             // Só contam o draw a que o game pertence
                              $query->where('draw_id', $draw_id);
                          })
@@ -82,17 +92,39 @@ class WinnerGameCheck
         return 0;
     }
     
+    /**
+     * @throws \Exception
+     */
     private function burnGame($drawId, $game_identifier)
     {
         // Temos de criar um novo momento vencedor porque este foi queimado
+        $drawModel = app(config('draw-engine.models.draw'));
+        $draw = $drawModel->find($drawId);
         
-        // Vamos buscar o total de jogos e somamos
-        $newWinnerGame = app(config('draw-engine.models.game'))->select('game')
-                             ->whereDate('created_at', now())
-                             ->count() + random_int(5, 15);
+        $queryBuilder = WinnerGame::where('draw_id', 1);
+
+        if ( $draw->frequency === 'day' ) {
+            // Só contam os jogos do dia
+            $queryBuilder->whereDate('date', now());
+        } elseif ( $draw->frequency === 'week' ) {
+            $week = now()->format('W');
+            $queryBuilder->where('week', $week );
+        }
+        $winnersGamesSequencesForPeriod = $queryBuilder->get()->pluck('winner_game')->toArray();
+    
+        // Vai gerando numeros de sequência até não have colisão com os restantes numeros
+        // Problema: O Novo seq number pode ser igual a um que já exista para o periodo
+        if (!$winnersGamesSequencesForPeriod) {
+            throw new \Exception('Error: Dont have any winner games on the system.');
+        }
+        do {
+            $newWinnerGameSequenceNumber = app(config('draw-engine.models.game'))->select('game')->whereDate('created_at', now())->count() + random_int(5, 15);
+            
+        } while ( in_array($newWinnerGameSequenceNumber, $winnersGamesSequencesForPeriod, true));
         
         // Criamos um novo com os mesmos dados mas com um numero diferente
         $currentGameNumber = $this->currentGameNumber($drawId, $game_identifier, now());
+
         $currentWinnerGame = WinnerGame::where('winner_game', $currentGameNumber)
             ->where('draw_id', $drawId)
             ->whereDate('created_at', now())
@@ -104,11 +136,12 @@ class WinnerGameCheck
             $currentWinnerGame->save();
             $currentWinnerGame->fresh();
             
+            // Criamos um novo
             WinnerGame::create([
                 'date' => $currentWinnerGame->date,
                 'draw_id' => $currentWinnerGame->draw_id,
                 'draw_type' => $currentWinnerGame->draw_type,
-                'winner_game' => $newWinnerGame,
+                'winner_game' => $newWinnerGameSequenceNumber,
                 'burned' => '0',
             ]);
         }

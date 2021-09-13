@@ -39,19 +39,21 @@ class CreatePrizeDeliverySchedule extends Command
      */
     public function handle()
     {
+        $drawModel = app(config('draw-engine.models.draw'));
+        $draw = $drawModel->find($this->argument('draw_id'));
+        
         $scheduler = new PrizeDeliverySchedule([
-            'dailyPrizeCap' => 4,
-            'prizes' => 19,
-            'algorithm' => 'spaced',
-            'type' => 'dates',
-            'start_period' => Carbon::now()->addDay(),
-            'end_period' => Carbon::createSafe(2021, 10, 31),
+            'dailyPrizeCap' => $draw->daily_prize_cap,
+            'prizes' => $draw->prizes,
+            'algorithm' => $draw->algorithm,
+            'type' => $draw->type,
+            'start_period' => $draw->start_period,
+            'end_period' => $draw->end_period,
         ]);
-        $schedule = $scheduler->distributePrizes(4);
+        $schedule = $scheduler->distributePrizes($draw->prize_delivery_interval);
 
         foreach ($schedule as $date => $prizes) {
             if ( $prizes > 0 ) {
-                ray($date,$prizes);
                 \PedroVasconcelos\DrawEngine\Models\PrizeDeliverySchedule::create([
                     'date' => $date,
                     'draw_id' => $this->argument('draw_id'),
