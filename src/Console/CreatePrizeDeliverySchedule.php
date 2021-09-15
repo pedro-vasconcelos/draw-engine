@@ -4,6 +4,7 @@ namespace PedroVasconcelos\DrawEngine\Console;
 
 use Carbon\Carbon;
 use Illuminate\Console\Command;
+use PedroVasconcelos\DrawEngine\Models\Winner;
 use PedroVasconcelos\DrawEngine\PrizeDeliverySchedule;
 
 class CreatePrizeDeliverySchedule extends Command
@@ -13,15 +14,15 @@ class CreatePrizeDeliverySchedule extends Command
      *
      * @var string
      */
-    protected $signature = 'app:create-prize-delivery-schedule {draw_id}';
-
+    protected $signature = 'app:create-prize-delivery-schedule {draw_id} {--reschedule : rebuild schedule}';
+    
     /**
      * The console command description.
      *
      * @var string
      */
     protected $description = 'Creates the prize delivery schedule for draw ID.';
-
+    
     /**
      * Create a new command instance.
      *
@@ -31,7 +32,7 @@ class CreatePrizeDeliverySchedule extends Command
     {
         parent::__construct();
     }
-
+    
     /**
      * Execute the console command.
      *
@@ -39,19 +40,31 @@ class CreatePrizeDeliverySchedule extends Command
      */
     public function handle()
     {
+        if ( $this->option('reschedule') ) {
+            \PedroVasconcelos\DrawEngine\Models\PrizeDeliverySchedule::truncate();
+        }
+        
         $drawModel = app(config('draw-engine.models.draw'));
         $draw = $drawModel->find($this->argument('draw_id'));
         
+        if ( $this->option('reschedule') ) {
+            $startPeriod = now();
+            $prizes = $draw->prizes - Winner::count();
+        } else {
+            $startPeriod = $draw->start_period;
+            $prizes = $draw->prizes;
+        }
+        
         $scheduler = new PrizeDeliverySchedule([
             'dailyPrizeCap' => $draw->daily_prize_cap,
-            'prizes' => $draw->prizes,
+            'prizes' => $prizes,
             'algorithm' => $draw->algorithm,
             'type' => $draw->type,
-            'start_period' => $draw->start_period,
+            'start_period' => $startPeriod,
             'end_period' => $draw->end_period,
         ]);
         $schedule = $scheduler->distributePrizes($draw->prize_delivery_interval);
-
+        
         foreach ($schedule as $date => $prizes) {
             if ( $prizes > 0 ) {
                 \PedroVasconcelos\DrawEngine\Models\PrizeDeliverySchedule::create([

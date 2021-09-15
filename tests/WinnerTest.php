@@ -263,4 +263,19 @@ class WinnerTest extends TestCase
         $result_game = $check->isWinnerGame($game->identifier, now() );
         $this->assertFalse($result_game);
     }
+    
+    /** @test */
+    public function it_works_with_week_and_day(): void
+    {
+        // == ARRANGE ==
+        // Distribuir winning moments por uma semana
+        // == ACT ==
+        // Verificar se o seq number do jogo da semana
+        // base com algum momento
+        
+        // == ASSERT ==
+        
+        self::markTestIncomplete();
+        // Fazer a mesma coisa para o dia
+    }
 }

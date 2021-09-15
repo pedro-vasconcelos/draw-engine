@@ -11,6 +11,9 @@ class PrizeDeliverySchedule extends Model
 
     protected $table = 'prize_delivery_schedule';
     protected $guarded = [];
+    protected $casts = [
+        'date' => 'date',
+    ];
     
     public function draw()
     {
