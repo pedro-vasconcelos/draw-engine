@@ -1,0 +1,45 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+class CreateDrawsTable extends Migration
+{
+    /**
+     * Run the migrations.
+     *
+     * @return void
+     */
+    public function up()
+    {
+        Schema::create('draws', function (Blueprint $table) {
+            $table->id();
+            $table->string('description')->default('');
+
+            $table->integer('daily_prize_cap');
+            $table->integer('prizes');
+            $table->integer('prize_delivery_interval')->default(0);
+            $table->string( 'algorithm');
+            $table->string('type');
+            $table->integer('week')->nullable();
+            $table->integer('month')->nullable();
+            $table->dateTime( 'start_period')->nullable();
+            $table->dateTime('end_period')->nullable();
+            $table->integer('winner_game_range_start')->default(1);
+            $table->integer('winner_game_range_end')->default(10);
+            $table->string('frequency')->default('day');
+            $table->timestamps();
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     *
+     * @return void
+     */
+    public function down()
+    {
+        Schema::dropIfExists('draws');
+    }
+}
