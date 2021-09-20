@@ -28,6 +28,9 @@ class CreateWinnersTable extends Migration
             $table->unsignedBigInteger('game_id');
             $table->string('game_type');
 
+            $table->unsignedBigInteger('draw_id');
+            $table->string('draw_type');
+
             $table->timestamps();
         });
     }

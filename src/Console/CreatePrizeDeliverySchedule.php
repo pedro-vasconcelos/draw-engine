@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use Illuminate\Console\Command;
 use PedroVasconcelos\DrawEngine\Models\Winner;
 use PedroVasconcelos\DrawEngine\PrizeDeliverySchedule;
+use Illuminate\Database\Eloquent\Builder;
 
 class CreatePrizeDeliverySchedule extends Command
 {
@@ -41,18 +42,24 @@ class CreatePrizeDeliverySchedule extends Command
     public function handle()
     {
         if ( $this->option('reschedule') ) {
-            \PedroVasconcelos\DrawEngine\Models\PrizeDeliverySchedule::truncate();
+            \PedroVasconcelos\DrawEngine\Models\PrizeDeliverySchedule::where('draw_id', $this->argument('draw_id'))->delete();
         }
         
         $drawModel = app(config('draw-engine.models.draw'));
         $draw = $drawModel->find($this->argument('draw_id'));
         
+        $winners = Winner::whereHasMorph('draw', config('draw-engine.models.draw'),
+            function (Builder $query) use ($draw) {
+                $query->where('draw_id', $draw->id);
+            },
+        )->count();
+        
         if ( $this->option('reschedule') ) {
             $startPeriod = now();
-            $prizes = $draw->prizes - Winner::count();
+            $prizes = $draw->prizes - $winners;
         } else {
             $startPeriod = $draw->start_period;
-            $prizes = $draw->prizes;
+            $prizes = $draw->prizes - $winners;
         }
         
         $scheduler = new PrizeDeliverySchedule([

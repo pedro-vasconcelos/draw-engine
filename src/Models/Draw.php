@@ -18,5 +18,10 @@ class Draw extends Model
         'start_period' => 'datetime',
         'end_period' => 'datetime',
     ];
-
+    
+    public function winner()
+    {
+        return $this->morphOne(Winner::class, 'draw');
+    }
+    
 }

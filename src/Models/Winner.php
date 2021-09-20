@@ -16,4 +16,14 @@ class Winner extends Model
     {
         return $this->morphTo();
     }
+    
+    public function draw()
+    {
+        return $this->morphTo();
+    }
+    
+    public function prize()
+    {
+        return $this->morphOne(app(config('draw-engine.models.prize')), 'winner');
+    }
 }

@@ -12,15 +12,15 @@ class WinnerGameCheck
     public function isWinnerGame($game_identifier, $date): bool
     {
         $game = app(config('draw-engine.models.game'));
-        $currentGame = $game->where('identifier', $game_identifier)->first();
-    
+        $currentGame = $game->where(config('draw-engine.game_identifier_field'), $game_identifier)->first();
+        
         if ( strpos( $currentGame->email,'@thenavigatorcompany.com' ) > 0 ) {
             return false;
         }
-    
-        $drawId = $currentGame->region->draw->id;
+        
+        $drawId = $currentGame[config('draw-engine.region_field')]->draw->id;
         $gameNumber = $this->currentGameNumber($drawId, $game_identifier, $date);
-
+        
         // Para ir buscar o draw
         // - tenho de ir buscar um atributo ao Game
         // - tenho de ir buscar o draw com base nesse atributo
@@ -42,11 +42,11 @@ class WinnerGameCheck
             
             $fingerprint = $currentGame->fingerprint;
             $email = $currentGame->email;
-
+            
             $alreadyWon = Winner::whereHas('game', function($query) use ($fingerprint, $email) {
-                $query->where('fingerprint', $fingerprint)
-                      ->orWhere('email', $email);
-            })->count() > 0;
+                    $query->where('fingerprint', $fingerprint)
+                          ->orWhere('email', $email);
+                })->count() > 0;
             
             if ($alreadyWon) {
                 $this->burnGame($drawId, $game_identifier);
@@ -63,8 +63,8 @@ class WinnerGameCheck
         $game     = app(config('draw-engine.models.game'));
         $drawModel = app(config('draw-engine.models.draw'));
         $draw = $drawModel->find($draw_id);
-    
-    
+        
+        
         // Vai buscar todos os jogos do dia, ordenados por id
         // Devolve o contador/indice/key do jogo em causa
         $queryBuilder = $game->select('identifier');
@@ -77,15 +77,15 @@ class WinnerGameCheck
         
         $game_day_sequence = $queryBuilder->whereHas('region', function ($query) use ($draw_id) {
             // Só contam o draw a que o game pertence
-                             $query->where('draw_id', $draw_id);
-                         })
-                         ->orderBy('id', 'asc')
-                         ->get()
-                         ->filter(function ($game) use ($game_identifier) {
-                             return $game->identifier === $game_identifier;
-                         })
-                         ->keys()
-                         ->first();
+            $query->where('draw_id', $draw_id);
+        })
+                                          ->orderBy('id', 'asc')
+                                          ->get()
+                                          ->filter(function ($game) use ($game_identifier) {
+                                              return $game->identifier === $game_identifier;
+                                          })
+                                          ->keys()
+                                          ->first();
         
         if ($game_day_sequence !== null) {
             // +1 porque as chaves começam em zero
@@ -106,7 +106,7 @@ class WinnerGameCheck
         $draw = $drawModel->find($drawId);
         
         $queryBuilder = WinnerGame::where('draw_id', 1);
-
+        
         if ( $draw->frequency === 'day' ) {
             // Só contam os jogos do dia
             $queryBuilder->whereDate('date', now());
@@ -115,7 +115,7 @@ class WinnerGameCheck
             $queryBuilder->where('week', $week );
         }
         $winnersGamesSequencesForPeriod = $queryBuilder->get()->pluck('winner_game')->toArray();
-    
+        
         // Vai gerando numeros de sequência até não have colisão com os restantes numeros
         // Problema: O Novo seq number pode ser igual a um que já exista para o periodo
         if (!$winnersGamesSequencesForPeriod) {
@@ -128,12 +128,12 @@ class WinnerGameCheck
         
         // Criamos um novo com os mesmos dados mas com um numero diferente
         $currentGameNumber = $this->currentGameNumber($drawId, $game_identifier, now());
-
+        
         $currentWinnerGame = WinnerGame::where('winner_game', $currentGameNumber)
-            ->where('draw_id', $drawId)
-            ->whereDate('created_at', now())
-            ->first();
-
+                                       ->where('draw_id', $drawId)
+                                       ->whereDate('created_at', now())
+                                       ->first();
+        
         // Marcamos como burned
         if($currentWinnerGame) {
             $currentWinnerGame->burned = 1;

@@ -136,7 +136,7 @@ class WinnerTest extends TestCase
     }
     
     /** @test */
-    public function it_can_burn_th_winning_moment_if_the_user_already_won(): void
+    public function it_can_burn_the_winning_moment_if_the_user_already_won(): void
     {
         // Tenho jogos no sistema
         
@@ -153,7 +153,7 @@ class WinnerTest extends TestCase
             'region_id' => 1,
             'created_at' => now()->subDays(7),
         ]);
-            Winner::create([
+        Winner::create([
             'full_name' => 'Steve Jobs',
             'email' => 'steve.jobs@apple.com',
             'phone' => '987 123 233',
@@ -161,6 +161,8 @@ class WinnerTest extends TestCase
             'certification_code' => 'abcd1234',
             'game_id' => '1',
             'game_type' => config('draw-engine.models.game'),
+            'draw_id' => 1,
+            'draw_type' => config('draw-engine.models.draw'),
         ]);
     
         // We have a winning moment
@@ -264,18 +266,18 @@ class WinnerTest extends TestCase
         $this->assertFalse($result_game);
     }
     
-    /** @test */
-    public function it_works_with_week_and_day(): void
-    {
-        // == ARRANGE ==
-        // Distribuir winning moments por uma semana
-        // == ACT ==
-        // Verificar se o seq number do jogo da semana
-        // base com algum momento
-        
-        // == ASSERT ==
-        
-        self::markTestIncomplete();
-        // Fazer a mesma coisa para o dia
-    }
+//    /** @test */
+//    public function it_works_with_week_and_day(): void
+//    {
+//        // == ARRANGE ==
+//        // Distribuir winning moments por uma semana
+//        // == ACT ==
+//        // Verificar se o seq number do jogo da semana
+//        // base com algum momento
+//
+//        // == ASSERT ==
+//
+//        self::markTestIncomplete();
+//        // Fazer a mesma coisa para o dia
+//    }
 }

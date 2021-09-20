@@ -15,14 +15,14 @@ class GenerateWinnerGamesCommand extends Command
      * @var string
      */
     protected $signature = 'app:generate-winner-games {draw_id} {date? : date (YYYY-MM-DD) to generate the winner games}';
-
+    
     /**
      * The console command description.
      *
      * @var string
      */
     protected $description = 'Generate winner games for draw ID';
-
+    
     /**
      * Create a new command instance.
      *
@@ -32,7 +32,7 @@ class GenerateWinnerGamesCommand extends Command
     {
         parent::__construct();
     }
-
+    
     /**
      * Execute the console command.
      *
@@ -44,11 +44,14 @@ class GenerateWinnerGamesCommand extends Command
             $date = Carbon::createFromFormat('Y-m-d', $this->argument('date'));
         else
             $date = Carbon::now();
-    
+        
         $drawModel = app(config('draw-engine.models.draw'));
         $draw = $drawModel->find($this->argument('draw_id'));
-    
-        $quotas = PrizeDeliverySchedule::whereDate('date', '=', $date->toDateString())->get();
+        
+        $quotas = PrizeDeliverySchedule::whereDate('date', '=', $date->toDateString())
+                                       ->where('draw_id', $this->argument('draw_id'))
+                                       ->get();
+        
         foreach ($quotas as $quota) {
             $range = range($draw->winner_game_range_start, $draw->winner_game_range_end);
             shuffle($range);
@@ -60,9 +63,9 @@ class GenerateWinnerGamesCommand extends Command
         }
         return 0;
     }
-
+    
     private function generateWinneGames($winnerGames, $date) {
-        WinnerGame::where('date', $date)->delete();
+        WinnerGame::where('date', $date)->where('draw_id', $this->argument('draw_id'))->delete();
         foreach( $winnerGames as $winnerGame ) {
             WinnerGame::create([
                 'date' => $date,
@@ -71,6 +74,6 @@ class GenerateWinnerGamesCommand extends Command
                 'winner_game' => $winnerGame,
             ]);
         }
-
+        
     }
 }
