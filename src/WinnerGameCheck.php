@@ -20,7 +20,7 @@ class WinnerGameCheck
         
         $drawId = $currentGame[config('draw-engine.region_field')]->draw->id;
         $gameNumber = $this->currentGameNumber($drawId, $game_identifier, $date);
-        
+
         // Para ir buscar o draw
         // - tenho de ir buscar um atributo ao Game
         // - tenho de ir buscar o draw com base nesse atributo
@@ -36,7 +36,7 @@ class WinnerGameCheck
                                  ->whereDate('date', $date->format('Y-m-d'))
                                  ->orderBy('winner_game', 'asc')
                                  ->pluck('winner_game')->toArray();
-        
+
         // se o jogo pertencer a um momento vencedor devolve true
         if (in_array($gameNumber, $winnerGames, false)) {
             
@@ -63,8 +63,7 @@ class WinnerGameCheck
         $game     = app(config('draw-engine.models.game'));
         $drawModel = app(config('draw-engine.models.draw'));
         $draw = $drawModel->find($draw_id);
-        
-        
+    
         // Vai buscar todos os jogos do dia, ordenados por id
         // Devolve o contador/indice/key do jogo em causa
         $queryBuilder = $game->select('identifier');
@@ -74,7 +73,6 @@ class WinnerGameCheck
         } elseif ( $draw->frequency === 'week' ) {
             $queryBuilder->where('week', $date->format('W') );
         }
-        
         $game_day_sequence = $queryBuilder->whereHas('region', function ($query) use ($draw_id) {
             // Só contam o draw a que o game pertence
             $query->where('draw_id', $draw_id);
@@ -86,12 +84,10 @@ class WinnerGameCheck
                                           })
                                           ->keys()
                                           ->first();
-        
         if ($game_day_sequence !== null) {
             // +1 porque as chaves começam em zero
             return $game_day_sequence + 1;
         }
-        
         // Se não houver registos devolve zero
         return 0;
     }

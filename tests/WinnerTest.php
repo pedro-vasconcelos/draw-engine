@@ -2,6 +2,7 @@
 
 namespace PedroVasconcelos\DrawEngine\Tests;
 
+use Carbon\Carbon;
 use Faker\Factory;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use PedroVasconcelos\DrawEngine\Models\Winner;
@@ -149,7 +150,7 @@ class WinnerTest extends TestCase
             'identifier' => $this->faker->sha1(),
             'email' => $email,
             'fingerprint' => $fingerprint,
-            'week' => 29,
+            'week' => now()->format('W'),
             'region_id' => 1,
             'created_at' => now()->subDays(7),
         ]);
@@ -253,7 +254,7 @@ class WinnerTest extends TestCase
             'identifier' => '123',
             'email' => 'steve.jobs@thenavigatorcompany.com',
             'fingerprint' => '987654321',
-            'week' => 29,
+            'week' => now()->format('W'),
             'region_id' => 1,
             'created_at' => now(),
         ]);
@@ -266,18 +267,172 @@ class WinnerTest extends TestCase
         $this->assertFalse($result_game);
     }
     
-//    /** @test */
-//    public function it_works_with_week_and_day(): void
-//    {
-//        // == ARRANGE ==
-//        // Distribuir winning moments por uma semana
-//        // == ACT ==
-//        // Verificar se o seq number do jogo da semana
-//        // base com algum momento
-//
-//        // == ASSERT ==
-//
-//        self::markTestIncomplete();
-//        // Fazer a mesma coisa para o dia
-//    }
+    /** @test */
+    public function it_works_with_multiples_draws_running_at_the_same_time(): void
+    {
+        // == ARRANGE ==
+        // Create several draws
+        $drawA = Draw::create([
+            'description' => 'Draw A',
+            'daily_prize_cap' => 20,
+            'prizes' => 319,
+            'algorithm' => 'spaced',
+            'type' => 'dates',
+            'frequency' => 'week',
+            'start_period' => Carbon::createSafe(2021, 7, 1),
+            'end_period' => Carbon::createSafe(2021, 11, 30),
+        ]);
+        // Create a region for each draw
+        $regionA = Region::create([
+            'name' => 'Austria',
+            'draw_id' => $drawA->id,
+        ]);
+        // Create 1 winner moment for each draw with the same sequence number
+        WinnerGame::create([
+            'date' => now(),
+            'draw_id' => $drawA->id,
+            'draw_type' => config('draw-engine.models.draw'),
+            'winner_game' => 1,
+            'burned' => 0,
+        ]);
+        
+        $drawB = Draw::create([
+            'description' => 'Draw B',
+            'daily_prize_cap' => 20,
+            'prizes' => 319,
+            'algorithm' => 'spaced',
+            'type' => 'dates',
+            'frequency' => 'week',
+            'start_period' => Carbon::createSafe(2021, 7, 1),
+            'end_period' => Carbon::createSafe(2021, 11, 30),
+        ]);
+        $regionB = Region::create([
+            'name' => 'Austria',
+            'draw_id' => $drawB->id,
+        ]);
+        WinnerGame::create([
+            'date' => now(),
+            'draw_id' => $drawB->id,
+            'draw_type' => config('draw-engine.models.draw'),
+            'winner_game' => 1,
+            'burned' => 0,
+        ]);
+        WinnerGame::create([
+            'date' => now(),
+            'draw_id' => $drawB->id,
+            'draw_type' => config('draw-engine.models.draw'),
+            'winner_game' => 3,
+            'burned' => 0,
+        ]);
+        
+        $drawC = Draw::create([
+            'description' => 'Draw C',
+            'daily_prize_cap' => 20,
+            'prizes' => 319,
+            'algorithm' => 'spaced',
+            'type' => 'dates',
+            'frequency' => 'week',
+            'start_period' => Carbon::createSafe(2021, 7, 1),
+            'end_period' => Carbon::createSafe(2021, 11, 30),
+        ]);
+        $regionC = Region::create([
+            'name' => 'Austria',
+            'draw_id' => $drawC->id,
+        ]);
+        WinnerGame::create([
+            'date' => now(),
+            'draw_id' => $drawC->id,
+            'draw_type' => config('draw-engine.models.draw'),
+            'winner_game' => 2,
+            'burned' => 0,
+        ]);
+        WinnerGame::create([
+            'date' => now(),
+            'draw_id' => $drawC->id,
+            'draw_type' => config('draw-engine.models.draw'),
+            'winner_game' => 1,
+            'burned' => 0,
+        ]);
+        
+        // Criar um jogo vencedor para um dos draws
+        $gameA = Game::create([
+            'identifier' => 'A',
+            'email' => 'steve.jobs@apple.com',
+            'fingerprint' => '987654321',
+            'week' => now()->format('W'),
+            'region_id' => $regionA->id,
+            'created_at' => now(),
+        ]);
+        $gameB = Game::create([
+            'identifier' => 'B',
+            'email' => 'steve.jobs@apple.com',
+            'fingerprint' => '987654321',
+            'week' => now()->format('W'),
+            'region_id' => $regionB->id,
+            'created_at' => now(),
+        ]);
+        $gameC = Game::create([
+            'identifier' => 'C',
+            'email' => 'steve.jobs@apple.com',
+            'fingerprint' => '987654321',
+            'week' => now()->format('W'),
+            'region_id' => $regionB->id,
+            'created_at' => now(),
+        ]);
+        $gameD = Game::create([
+            'identifier' => 'D',
+            'email' => 'steve.jobs@apple.com',
+            'fingerprint' => '987654321',
+            'week' => now()->format('W'),
+            'region_id' => $regionB->id,
+            'created_at' => now(),
+        ]);
+        $gameE = Game::create([
+            'identifier' => 'E',
+            'email' => 'steve.jobs@apple.com',
+            'fingerprint' => '987654321',
+            'week' => now()->format('W'),
+            'region_id' => $regionB->id,
+            'created_at' => now(),
+        ]);
+        $gameF = Game::create([
+            'identifier' => 'F',
+            'email' => 'steve.jobs@apple.com',
+            'fingerprint' => '987654321',
+            'week' => now()->format('W'),
+            'region_id' => $regionC->id,
+            'created_at' => now(),
+        ]);
+        $gameG = Game::create([
+            'identifier' => 'G',
+            'email' => 'steve.jobs@apple.com',
+            'fingerprint' => '987654321',
+            'week' => now()->format('W'),
+            'region_id' => $regionC->id,
+            'created_at' => now(),
+        ]);
+    
+        $check = new WinnerGameCheck();
+        // O jogo não é vencedor
+        $result_gameA = $check->isWinnerGame($gameA->identifier, now() );
+        $this->assertTrue($result_gameA);
+
+        $result_gameB = $check->isWinnerGame($gameB->identifier, now() );
+        $this->assertTrue($result_gameB);
+
+        $result_gameC = $check->isWinnerGame($gameC->identifier, now() );
+        $this->assertFalse($result_gameC);
+    
+        $result_gameD = $check->isWinnerGame($gameD->identifier, now() );
+        $this->assertTrue($result_gameD);
+        
+        $result_gameE = $check->isWinnerGame($gameE->identifier, now() );
+        $this->assertFalse($result_gameE);
+
+        $result_gameF = $check->isWinnerGame($gameF->identifier, now() );
+        $this->assertTrue($result_gameF);
+
+        $result_gameG = $check->isWinnerGame($gameG->identifier, now() );
+        $this->assertTrue($result_gameG);
+    }
 }

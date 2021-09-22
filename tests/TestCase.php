@@ -140,8 +140,13 @@ class TestCase extends \Orchestra\Testbench\TestCase
         ]);
     
         Region::create([
-            'name' => 'Espanha',
+            'name' => 'Spain',
             'draw_id' => 2,
+        ]);
+        
+        Region::create([
+            'name' => 'France',
+            'draw_id' => 3,
         ]);
     
         PrizeDeliverySchedule::create([
