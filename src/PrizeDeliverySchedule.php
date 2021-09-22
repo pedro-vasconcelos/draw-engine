@@ -55,6 +55,12 @@ class PrizeDeliverySchedule
             $this->start_period = $date->copy()->startOfMonth();
             $this->end_period   = $date->copy()->endOfMonth();
         }
+        if ( !$this->start_period ) {
+            throw InvalidDatePeriod::couldNotMakePeriod();
+        }
+        if ( !$this->end_period ) {
+            throw InvalidDatePeriod::couldNotMakePeriod();
+        }
         $this->period     = CarbonPeriod::create($this->start_period, $this->end_period);
         $this->periodDays = $this->period->count();
     }
@@ -65,12 +71,8 @@ class PrizeDeliverySchedule
      */
     public function verifyConfig(): bool
     {
-        if ( !$this->start_period ) {
-            throw InvalidDatePeriod::couldNotMakePeriod();
-        }
-        $period = CarbonPeriod::create($this->start_period, $this->end_period);
         // Numero de dias
-        $days = $period->count();
+        $days = $this->period->count();
         // Prémios
         $prizes = $this->prizes;
         // Cap
