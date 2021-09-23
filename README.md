@@ -8,39 +8,26 @@
 
 Introduction
 
+This library has all the logic to support the Lucky Draw activity of several projects.
+
 ## TODO
-
-Criar um Interface para garantir que quando recebemos um Draw (nos 2 console commands), temos todos os atributos que necessitamos: dailyPrizeCap, prizes, algorithm, type, start_period, end_period
-
-Melhorar as variantes da table dos draws... campos null em função de algumas condições não está bem.
-
-```
-10494  docker compose exec laravel php artisan vendor:publish --provider="PedroVasconcelos\DrawEngine\DrawServiceProvider" --tag="migrations"
-10495  docker compose exec laravel php artisan migrate
-10496  docker compose exec laravel php artisan db:seed --class="DrawsSeeder"
-10497  docker compose exec laravel php artisan app:create-prize-delivery-schedule 1
-10498  docker compose exec laravel php artisan app:generate-winner-games 1 2021-09-07
-```
 
 ## Install
 
 ```bash
 php artisan vendor:publish --provider="PedroVasconcelos\DrawEngine\DrawServiceProvider" --tag="migrations"
-
+php artisan migrate
 php artisan vendor:publish --provider="PedroVasconcelos\DrawEngine\DrawServiceProvider" --tag="config"
+# Check the config file and setup the models
+# Add the trait `HasPrizeSchedule` to the model to access the schedule
+php artisan db:seed --class="DrawsSeeder"
 ```
-
-
-
-Configurar o model referente aos Draws, por defeito aponta para `App\Models\Draw::class`
-
-Adicionar o Trait `HasPrizeSchedule` se for necessário aceder ao planeamento
 
 ## Commands
 
 ```bash
-app:create-prize-delivery-schedule
-app:generate-winner-game
+php artisan app:create-prize-delivery-schedule 1
+php artisan app:generate-winner-games 1 2021-09-07
 ```
 
 ## Changelog
