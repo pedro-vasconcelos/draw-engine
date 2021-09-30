@@ -42,6 +42,9 @@ class TestCase extends \Orchestra\Testbench\TestCase
         // perform environment setup
         $app['config']->set('draw-engine.models.draw', Draw::class);
         $app['config']->set('draw-engine.models.game', Game::class);
+        $app['config']->set('draw-engine.game_identifier_field', 'identifier');
+        $app['config']->set('draw-engine.region_field', 'region');
+
     }
     
     /**
@@ -72,6 +75,7 @@ class TestCase extends \Orchestra\Testbench\TestCase
             $table->id();
             $table->string('identifier')->default('');
             $table->unsignedBigInteger('region_id')->unsigned()->nullable();
+            $table->string('code', 30);
             $table->string('email')->default('');
             $table->string('fingerprint')->default('');
             $table->integer('week')->nullable();

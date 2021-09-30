@@ -39,6 +39,7 @@ class WinnerTest extends TestCase
         // == ACT ==
         // First player plays
         $game1 = Game::create([
+            'code' => '143416-2R39235026',
             'identifier' => $this->faker->sha1(),
             'email' => 'steve.jobs@apple.com',
             'fingerprint' => $this->faker->sha1(),
@@ -47,6 +48,7 @@ class WinnerTest extends TestCase
         ]);
         // Second player plays
         $game2 = Game::create([
+            'code' => '143416-2R39235026',
             'identifier' => $this->faker->sha1(),
             'email' => 'jony.ive@apple.com',
             'fingerprint' => $this->faker->sha1(),
@@ -71,16 +73,19 @@ class WinnerTest extends TestCase
     {
         // Tenho jogos no sistema
         $game1 = Game::create([
+            'code' => '143416-2R39235026',
             'identifier' => $this->faker->sha1(),
             'region_id' => 1,
             'week' => 32,
         ]);
         $game2 = Game::create([
+            'code' => '143416-2R39235026',
             'identifier' => $this->faker->sha1(),
             'region_id' => 2,
             'week' => 32,
         ]);
         $game3 = Game::create([
+            'code' => '143416-2R39235026',
             'identifier' => $this->faker->sha1(),
             'region_id' => 2,
             'week' => 32,
@@ -116,6 +121,7 @@ class WinnerTest extends TestCase
         // Tenho jogos no sistema
         $game1 = Game::create([
             'identifier' => $this->faker->sha1(),
+            'code' => '143416-2R39235026',
             'region_id' => 1,
             'week' => 32,
         ]);
@@ -149,6 +155,7 @@ class WinnerTest extends TestCase
         Game::create([
             'identifier' => $this->faker->sha1(),
             'email' => $email,
+            'code' => '143416-2R39235026',
             'fingerprint' => $fingerprint,
             'week' => now()->format('W'),
             'region_id' => 1,
@@ -180,6 +187,7 @@ class WinnerTest extends TestCase
         $game = Game::create([
             'identifier' => $this->faker->sha1(),
             'email' => $email,
+            'code' => '143416-2R39235026',
             'fingerprint' => $fingerprint,
             'region_id' => 1,
             'week' => 32,
@@ -201,6 +209,7 @@ class WinnerTest extends TestCase
         $game1 = Game::create([
             'identifier' => $this->faker->sha1(),
             'email' => 'steve.jobs@apple.com',
+            'code' => '143416-2R39235026',
             'fingerprint' => $this->faker->sha1(),
             'week' => now()->format('W'),
             'region_id' => 1,
@@ -214,6 +223,7 @@ class WinnerTest extends TestCase
         Game::create([
             'identifier' => $this->faker->sha1(),
             'email' => $email,
+            'code' => '143416-2R39235026',
             'fingerprint' => $fingerprint,
             'week' => now()->format('W'),
             'region_id' => 2,
@@ -223,6 +233,7 @@ class WinnerTest extends TestCase
         $game2 = Game::create([
             'identifier' => $this->faker->sha1(),
             'email' => $email,
+            'code' => '143416-2R39235026',
             'fingerprint' => $fingerprint,
             'week' => now()->format('W'),
             'region_id' => 2,
@@ -253,6 +264,7 @@ class WinnerTest extends TestCase
         $game = Game::create([
             'identifier' => '123',
             'email' => 'steve.jobs@thenavigatorcompany.com',
+            'code' => '143416-2R39235026',
             'fingerprint' => '987654321',
             'week' => now()->format('W'),
             'region_id' => 1,
@@ -358,6 +370,7 @@ class WinnerTest extends TestCase
         $gameA = Game::create([
             'identifier' => 'A',
             'email' => 'steve.jobs@apple.com',
+            'code' => '143416-2R39235026',
             'fingerprint' => '987654321',
             'week' => now()->format('W'),
             'region_id' => $regionA->id,
@@ -366,6 +379,7 @@ class WinnerTest extends TestCase
         $gameB = Game::create([
             'identifier' => 'B',
             'email' => 'steve.jobs@apple.com',
+            'code' => '143416-2R39235026',
             'fingerprint' => '987654321',
             'week' => now()->format('W'),
             'region_id' => $regionB->id,
@@ -374,6 +388,7 @@ class WinnerTest extends TestCase
         $gameC = Game::create([
             'identifier' => 'C',
             'email' => 'steve.jobs@apple.com',
+            'code' => '143416-2R39235026',
             'fingerprint' => '987654321',
             'week' => now()->format('W'),
             'region_id' => $regionB->id,
@@ -382,6 +397,7 @@ class WinnerTest extends TestCase
         $gameD = Game::create([
             'identifier' => 'D',
             'email' => 'steve.jobs@apple.com',
+            'code' => '143416-2R39235026',
             'fingerprint' => '987654321',
             'week' => now()->format('W'),
             'region_id' => $regionB->id,
@@ -390,6 +406,7 @@ class WinnerTest extends TestCase
         $gameE = Game::create([
             'identifier' => 'E',
             'email' => 'steve.jobs@apple.com',
+            'code' => '143416-2R39235026',
             'fingerprint' => '987654321',
             'week' => now()->format('W'),
             'region_id' => $regionB->id,
@@ -398,6 +415,7 @@ class WinnerTest extends TestCase
         $gameF = Game::create([
             'identifier' => 'F',
             'email' => 'steve.jobs@apple.com',
+            'code' => '143416-2R39235026',
             'fingerprint' => '987654321',
             'week' => now()->format('W'),
             'region_id' => $regionC->id,
@@ -406,6 +424,7 @@ class WinnerTest extends TestCase
         $gameG = Game::create([
             'identifier' => 'G',
             'email' => 'steve.jobs@apple.com',
+            'code' => '143416-2R39235026',
             'fingerprint' => '987654321',
             'week' => now()->format('W'),
             'region_id' => $regionC->id,
